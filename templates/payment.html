@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Payment - Game Store</title>
+  <link rel="stylesheet" href="/statics/style.css">
+  <style>
+    /* Modern Steam-like Dark UI */
+    body {
+      background-color: #1b2838;
+      color: #c7d5e0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 900px;
+      margin: 30px auto;
+      background-color: #2a475e;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #66c0f4;
+    }
+    .cart-items, .payment-options {
+      margin-bottom: 20px;
+    }
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 15px;
+      border-bottom: 1px solid #3a6073;
+      align-items: center;
+    }
+    .cart-item:last-child {
+      border-bottom: none;
+    }
+    .cart-item img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+    .cart-item-details {
+      flex: 1;
+      margin-left: 15px;
+    }
+    .cart-item-details p {
+      margin: 2px 0;
+    }
+    .total-price {
+      text-align: right;
+      font-size: 20px;
+      font-weight: bold;
+      margin-top: 15px;
+      color: #b9c3d1;
+    }
+    .payment-options label {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 18px;
+      color: #66c0f4;
+    }
+    .payment-options input[type="radio"] {
+      margin-right: 10px;
+    }
+    .btn {
+      display: inline-block;
+      padding: 12px 20px;
+      font-size: 16px;
+      font-weight: bold;
+      color: #1b2838;
+      background-color: #66c0f4;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      text-align: center;
+      transition: background-color 0.3s ease;
+    }
+    .btn:hover {
+      background-color: #5aa8e6;
+    }
+    .back-btn {
+      background-color: #3a6073;
+      margin-bottom: 20px;
+    }
+    .back-btn:hover {
+      background-color: #324b5a;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <button class="btn back-btn" onclick="window.location.href='/cart.html'">← Back to Cart</button>
+    <h1>Payment</h1>
+
+    <!-- Cart Details Section -->
+    <div class="cart-items">
+      <h2>Your Cart</h2>
+      <div id="cartDetails">
+        <!-- Cart items will be dynamically loaded here -->
+      </div>
+      <div class="total-price">
+        Total: ₹<span id="totalPrice">0.00</span>
+      </div>
+    </div>
+
+    <!-- Payment Options Section -->
+    <div class="payment-options">
+      <h2>Payment Options</h2>
+      <label>
+        <input type="radio" name="paymentOption" value="debit" checked> Debit Card
+      </label>
+      <label>
+        <input type="radio" name="paymentOption" value="credit"> Credit Card
+      </label>
+      <label>
+        <input type="radio" name="paymentOption" value="upi"> UPI
+      </label>
+    </div>
+
+    <!-- Place Order Button -->
+    <button class="btn" onclick="placeOrder()">Place Order</button>
+  </div>
+
+  <script>
+    // Load cart from localStorage
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    // Retrieve the current logged-in user's details from sessionStorage.
+    let currentUser = {
+      username: sessionStorage.getItem("user_name"),
+      email: sessionStorage.getItem("user_email")
+    };
+
+    function renderCartDetails() {
+      const cartContainer = document.getElementById("cartDetails");
+      cartContainer.innerHTML = "";
+      let totalPrice = 0;
+
+      if (cart.length === 0) {
+        cartContainer.innerHTML = "<p>Your cart is empty.</p>";
+      } else {
+        cart.forEach(item => {
+          // Remove any potential dollar sign and convert to float
+          let priceNum = parseFloat(String(item.price).replace('$', ''));
+          totalPrice += priceNum;
+          const div = document.createElement("div");
+          div.classList.add("cart-item");
+          div.innerHTML = `
+            <img src="${item.image_path || '/statics/images/placeholder.jpg'}" alt="${item.name}">
+            <div class="cart-item-details">
+              <p>${item.name}</p>
+              <p>Price: ₹${priceNum.toFixed(2)}</p>
+            </div>
+          `;
+          cartContainer.appendChild(div);
+        });
+      }
+      document.getElementById("totalPrice").textContent = totalPrice.toFixed(2);
+    }
+
+    // Place Order: check for duplicate transactions and then send order to backend
+    async function placeOrder() {
+      if (cart.length === 0) {
+        alert("Your cart is empty!");
+        return;
+      }
+      
+      // Ensure the current user is logged in
+      if (!currentUser.username || !currentUser.email) {
+        alert("Please login to place an order.");
+        window.location.href = "/";
+        return;
+      }
+      
+      // Get the chosen payment option (dummy - no further processing)
+      const paymentOption = document.querySelector('input[name="paymentOption"]:checked').value;
+      
+      // Build order payload.
+      // Each cart item now includes price converted to a number.
+      const games = cart.map(item => ({
+        game_id: item.id,
+        game_name: item.name,
+        price: parseFloat(String(item.price).replace('$', ''))
+      }));
+      
+      // Fetch current transactions for the user and check for duplicates
+      try {
+        const txResponse = await fetch("/api/transactions?username=" + encodeURIComponent(currentUser.username));
+        if (!txResponse.ok) {
+          alert("Error checking previous transactions. Please try again later.");
+          return;
+        }
+        const txData = await txResponse.json();
+        const duplicateGames = [];
+        // Compare each game in the order with the transactions
+        games.forEach(game => {
+          if (txData.transactions.some(tx => tx.game_id === game.game_id)) {
+            duplicateGames.push(game.game_name);
+          }
+        });
+        if (duplicateGames.length > 0) {
+          alert("Duplicate transaction(s) found for the following game(s): " + duplicateGames.join(", ") + ". Please remove these from your cart before placing a new order.");
+          return;
+        }
+      } catch (error) {
+        console.error("Error checking transactions:", error);
+        alert("An error occurred while checking for duplicate transactions. Please try again later.");
+        return;
+      }
+      
+      // If no duplicates, proceed to place the order
+      const order = {
+        user_name: currentUser.username,
+        email: currentUser.email,
+        games: games
+      };
+      
+      try {
+        const response = await fetch("/api/transactions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(order)
+        });
+        if (response.ok) {
+          alert("Payment successful! Your order has been placed.");
+          // Clear the cart from localStorage after successful order
+          localStorage.removeItem("cart");
+          // Redirect to order confirmation page or home
+          window.location.href = "/order-confirmation.html";
+        } else {
+          alert("Payment failed! Please try again.");
+        }
+      } catch (error) {
+        console.error("Error placing order:", error);
+        alert("An error occurred. Please try again later.");
+      }
+    }
+
+    // Render the cart details on page load
+    window.onload = renderCartDetails;
+  </script>
+</body>
+</html>

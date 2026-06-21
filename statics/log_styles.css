@@ -1,0 +1,160 @@
+/* 
+  Modern two-panel layout:
+  - Left side for illustration or background
+  - Right side for the login form
+*/
+
+/* Global Reset/Setup */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+  background: #f0f2f5;
+  height: 100vh;
+  display: flex;
+}
+
+/* Container for both panels */
+.container {
+  display: flex;
+  flex: 1;
+}
+
+/* Left panel: Purple background or image */
+.left-panel {
+  flex: 1;
+  background: linear-gradient(to bottom right, #000000, #8c8c8c);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  /* overflow: hidden;  <-- Uncomment if you want to hide any part that might exceed container */
+}
+
+/* Illustration image inside the left panel */
+.nightcity {
+  /* Ensure the image never exceeds 80% of the container’s width/height */
+  max-width: 80%;
+  max-height: 80%;
+  width: auto;
+  height: auto;
+  object-fit: contain; /* Keeps the entire image visible without distortion */
+}
+
+/* Right panel: White form area */
+.right-panel {
+  width: 400px; /* Fixed width for the form side */
+  background: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Form styles */
+form {
+  width: 80%;
+  max-width: 320px;
+  margin: auto;
+  background: #fff;
+}
+
+.form-title {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+/* Role selector: side by side radio */
+.role-selector {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.role-selector input[type="radio"] {
+  margin-right: 0.3rem;
+  accent-color: #6c63ff; /* Purple accent for radio */
+}
+
+/* Labels and inputs */
+form label {
+  display: block;
+  margin-top: 1rem;
+  font-weight: 600;
+}
+
+input[type="email"],
+input[type="password"],
+input[type="text"] {
+  width: 100%;
+  margin-top: 0.5rem;
+  padding: 0.65rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+/* Password container with eye icon */
+.password-container {
+  position: relative;
+}
+
+.eye-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 1rem;
+  color: #666;
+  cursor: pointer;
+}
+
+/* Forgot password link */
+.forgot-link {
+  display: inline-block;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: #6c63ff;
+  text-decoration: none;
+  float: right;
+}
+
+.forgot-link:hover {
+  text-decoration: underline;
+}
+
+/* Sign in button */
+.login-btn {
+  width: 100%;
+  padding: 0.75rem;
+  margin-top: 2.5rem;
+  background: #6c63ff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.login-btn:hover {
+  background: #574de2;
+}
+
+/* Message below the button */
+#message {
+  margin-top: 1rem;
+  text-align: center;
+  font-weight: bold;
+  min-height: 1.2em;
+}

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shopping Cart</title>
+  <link rel="stylesheet" href="/statics/style.css">
+  <style>
+    /* Add your cart page styles here */
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #ccc;
+    }
+    .cart-item img {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+    }
+    .cart-item-details {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .cart-item .remove-btn {
+      cursor: pointer;
+      color: red;
+    }
+    .total-price {
+      text-align: right;
+      font-size: 18px;
+      margin-top: 20px;
+    }
+    .checkout-btn {
+      background-color: #28a745;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .back-btn {
+      background-color: #007BFF;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Your Shopping Cart</h1>
+
+    <!-- Back to Store Button -->
+    <button onclick="window.location.href='/store.html'" class="back-btn">Back to Store</button>
+
+    <div id="cartItems">
+      <!-- Cart items will be dynamically loaded here -->
+    </div>
+    <div class="total-price">
+      <strong>Total: ₹<span id="totalPrice">0.00</span></strong>
+    </div>
+    <button class="checkout-btn" onclick="checkout()">Proceed to Checkout</button>
+  </div>
+
+  <script>
+    // Initialize cart from localStorage or empty cart
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    console.log("Cart loaded:", cart);
+
+    function renderCart() {
+      const cartItemsContainer = document.getElementById("cartItems");
+      cartItemsContainer.innerHTML = "";  // Clear previous items
+
+      let totalPrice = 0;
+      if (cart.length === 0) {
+        cartItemsContainer.innerHTML = "<p>Your cart is empty.</p>";
+        totalPrice = 0; // Ensure total is zero when cart is empty
+      } else {
+        // Loop through the cart and create HTML for each item
+        cart.forEach((item, index) => {
+          // Ensure price is a string before replacing
+          totalPrice += parseFloat(String(item.price).replace('$', ''));
+          const cartItem = document.createElement("div");
+          cartItem.classList.add("cart-item");
+
+          cartItem.innerHTML = `
+            <img src="${item.image_path || '/statics/images/placeholder.jpg'}" alt="${item.name}">
+            <div class="cart-item-details">
+              <p>${item.name}</p>
+              <p>Price: ₹${item.price}</p>
+            </div>
+            <button class="remove-btn" onclick="removeItem(${index})">Remove</button>
+          `;
+          cartItemsContainer.appendChild(cartItem);
+        });
+      }
+      // Update total price immediately
+      document.getElementById("totalPrice").textContent = totalPrice.toFixed(2);
+    }
+
+    function removeItem(index) {
+      // Remove the item from the cart array and update localStorage
+      cart.splice(index, 1);
+      localStorage.setItem("cart", JSON.stringify(cart));
+
+      // Re-render the cart immediately
+      renderCart();
+    }
+
+    function checkout() {
+      if (cart.length === 0) {
+        alert("Your cart is empty!");
+        return;
+      }
+      // Redirect to checkout page
+      window.location.href = "/payment.html";
+    }
+
+    // Render the cart when the page loads
+    window.onload = renderCart;
+  </script>
+</body>
+</html>

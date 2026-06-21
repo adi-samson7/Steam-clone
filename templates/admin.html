@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard</title>
+  <style>
+    /* Basic Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      color: #333;
+    }
+    /* Dashboard Layout */
+    .dashboard {
+      display: flex;
+      min-height: 100vh;
+    }
+    /* Sidebar Styling */
+    .sidebar {
+      background-color: #fff;
+      border-right: 1px solid #ddd;
+      width: 220px;
+      padding: 20px;
+    }
+    .sidebar h2 {
+      margin-bottom: 20px;
+      font-size: 1.2em;
+      text-align: center;
+    }
+    .sidebar ul {
+      list-style: none;
+    }
+    .sidebar li {
+      margin-bottom: 15px;
+    }
+    .sidebar li a {
+      text-decoration: none;
+      color: #333;
+      display: block;
+      padding: 10px;
+      border-radius: 4px;
+    }
+    .sidebar li a:hover,
+    .sidebar li a.active {
+      background-color: #e0e0e0;
+    }
+    /* Topbar (Account Button) */
+    .topbar {
+      position: absolute;
+      right: 20px;
+      top: 10px;
+      display: inline-block;
+    }
+    .account-btn {
+      background-color: #007BFF;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      position: relative;
+    }
+    .dropdown {
+      visibility: hidden;
+      opacity: 0;
+      position: absolute;
+      top: 40px;
+      right: 0;
+      background-color: white;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+      width: 150px;
+      transition: visibility 0.2s, opacity 0.2s;
+    }
+    .dropdown a {
+      display: block;
+      padding: 10px;
+      color: #333;
+      text-decoration: none;
+    }
+    .dropdown a:hover {
+      background-color: #f0f0f0;
+    }
+    /* Fix: Keep dropdown visible when hovering */
+    .topbar:hover .dropdown,
+    .account-btn:focus + .dropdown {
+      visibility: visible;
+      opacity: 1;
+    }
+    /* Main Content Area */
+    .content {
+      flex: 1;
+      padding: 20px;
+    }
+    .section {
+      display: none;
+    }
+    .section.active {
+      display: block;
+    }
+    /* Grid Layout for Cards */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+    .card {
+      background-color: #fff;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    button {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 4px;
+      background-color: #007BFF;
+      color: #fff;
+      cursor: pointer;
+      margin-right: 5px;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    /* Form Elements */
+    select, input {
+      padding: 8px;
+      margin-top: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      width: 100%;
+    }
+    label {
+      margin-top: 15px;
+      display: block;
+    }
+    /* Table Styling for All Games Section and Revenue Section */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+    th {
+      background-color: #f0f0f0;
+    }
+    /* Game Form Styling */
+    #game-form {
+      border: 1px solid #ddd;
+      background: #fff;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 20px;
+      display: none;
+    }
+    #game-form button {
+      margin-top: 10px;
+    }
+    /* Buttons for Category Selection */
+    .category-btns {
+      margin-top: 5px;
+    }
+    .category-btns button {
+      margin-right: 5px;
+      padding: 4px 8px;
+      font-size: 0.9em;
+    }
+    /* Revenue Search Container */
+    .revenue-buttons {
+      margin-top: 15px;
+    }
+    .revenue-search {
+      margin-bottom: 10px;
+    }
+    .revenue-search input {
+      width: 200px; /* Smaller search bar */
+      padding: 6px;
+      display: inline-block;
+      margin-right: 10px;
+    }
+    .revenue-search button {
+      padding: 6px 10px;
+      display: inline-block;
+    }
+    .total-revenue-button button {
+      padding: 6px 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+      <h2>Admin Dashboard</h2>
+      <ul>
+        <li><a href="#" data-section="games" class="active">Games Management</a></li>
+        <li><a href="#" data-section="transactions">Transactions</a></li>
+        <li><a href="#" data-section="all-games">View All Games</a></li>
+        <li><a href="#" data-section="revenue">View Revenue</a></li>
+      </ul>
+    </div>
+
+    <!-- Topbar with Account Button -->
+    <div class="topbar">
+      <button class="account-btn">Account ▼</button>
+      <div class="dropdown">
+        <a href="/" id="logout">Logout</a>
+      </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="content">
+      <!-- Games Management Section -->
+      <div id="games" class="section active">
+        <h2>Games Management</h2>
+        <button id="add-game-btn" style="margin-top: 15px;">Add New Game</button>
+        <!-- Search Bar for Games -->
+        <div id="game-search-container" style="margin-top: 20px; display: flex; gap: 10px; align-items: center;">
+          <input type="text" id="game-search" placeholder="Search game by name..." style="width: 200px;">
+          <button id="game-search-btn" style="margin-top: 10px;">Search</button>
+        </div>
+        
+        <!-- Hidden Form for Adding/Editing a Game -->
+        <div id="game-form">
+          <h3 id="form-title">Add New Game</h3>
+          <input type="hidden" id="game-id">
+          <label for="game-name">Name:</label>
+          <input type="text" id="game-name">
+          <label for="game-price">Price:</label>
+          <input type="number" step="0.01" id="game-price">
+          <label for="game-year">Year:</label>
+          <input type="number" id="game-year">
+          <label for="game-image-path">Image Path: /statics/images/example.jpg</label>
+          <input type="text" id="game-image-path">
+          <!-- Hidden Field for Admin ID -->
+          <input type="hidden" id="admin-id">
+          <label for="game-category">Category (select multiple):</label>
+          <select id="game-category" multiple>
+            <option value="Action RPG">Action RPG</option>
+            <option value="Fighting">Fighting</option>
+            <option value="Horror">Horror</option>
+            <option value="Open World">Open World</option>
+            <option value="Sports">Sports</option>
+            <option value="Free to Play">Free to Play</option>
+            <option value="Racing">Racing</option>
+          </select>
+          <div class="category-btns">
+            <button id="select-all-categories" type="button">Select All</button>
+            <button id="clear-categories" type="button">Clear</button>
+          </div>
+          <br>
+          <button id="save-game-btn">Publish</button>
+          <button id="cancel-game-btn">Cancel</button>
+        </div>
+        <!-- Grid for displaying games as cards -->
+        <div class="grid" id="game-cards">
+          <!-- Cards will be dynamically populated from /games -->
+        </div>
+      </div>
+
+      <!-- Transactions Section -->
+      <div id="transactions" class="section">
+        <h2>Transactions</h2>
+        <div style="display: flex; align-items: center; gap: 10px; margin-top: 20px;">
+          <label for="transaction-search">Search by User Name:</label>
+          <input type="text" id="transaction-search" placeholder="Enter user name" style="width: 200px;">
+          <button id="transaction-search-btn">Search</button>
+        </div>
+        
+        <div class="grid" id="transactions-grid">
+          <!-- Transaction cards will be dynamically populated -->
+        </div>
+      </div>
+
+      <!-- All Games Section -->
+      <div id="all-games" class="section">
+        <h2>All Games</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Price</th>
+              <th>Category</th>
+              <th>Year</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Dynamically populated rows from MySQL games_list table -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Revenue Section (Modified) -->
+      <div id="revenue" class="section">
+        <h2>Revenue</h2>
+        <div class="revenue-buttons">
+          <div class="revenue-search">
+            <input type="text" id="revenue-game-search" placeholder="Enter game name">
+            <button id="calc-revenue-by-game-btn">Calculate Revenue by Game Name</button>
+          </div>
+          <div class="total-revenue-button">
+            <button id="calc-revenue-btn">Calculate Total Revenue</button>
+          </div>
+        </div>
+        <!-- The calculated revenue table will be inserted below -->
+        <div id="revenue-table-container"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Fetch the current admin's id and set it for subsequent functions.
+    function fetchAdminID() {
+      const userEmail = sessionStorage.getItem("user_email");
+      if (userEmail) {
+        return fetch(`/api/admin_profile?email=${encodeURIComponent(userEmail)}`)
+          .then(response => response.json())
+          .then(data => {
+            if (data.admin && data.admin.id) {
+              document.getElementById("admin-id").value = data.admin.id;
+            } else {
+              console.error("Admin ID not found in the response.");
+            }
+          })
+          .catch(err => {
+            console.error("Error fetching admin data:", err);
+          });
+      } else {
+        console.error("No user email found in session storage.");
+        return Promise.resolve();
+      }
+    }
+
+    // Fetch and populate games for Games Management as cards (only current admin).
+    function fetchGameCards() {
+      fetch("/games")
+        .then(response => response.json())
+        .then(data => {
+          const adminID = document.getElementById("admin-id").value;
+          const container = document.getElementById("game-cards");
+          container.innerHTML = "";
+          const adminGames = data.games.filter(game => String(game.admin_id) === String(adminID));
+          adminGames.forEach(game => {
+            const card = document.createElement("div");
+            card.className = "card";
+            card.innerHTML = `<h3>${game.name}</h3>
+                              <p>ID: ${game.id}</p>
+                              <p>Price: ₹${game.price}</p>
+                              <p>Category: ${game.category}</p>
+                              <p>Year: ${game.year}</p>
+                              <p>Admin ID: ${game.admin_id || ''}</p>
+                              <button class="edit-btn" data-id="${game.id}">Edit</button>
+                              <button class="delete-btn" data-id="${game.id}">Delete</button>`;
+            container.appendChild(card);
+          });
+          document.querySelectorAll(".edit-btn").forEach(btn => {
+            btn.addEventListener("click", function() {
+              const id = this.getAttribute("data-id");
+              const game = adminGames.find(g => g.id == id);
+              showGameForm("edit", game);
+            });
+          });
+          document.querySelectorAll(".delete-btn").forEach(btn => {
+            btn.addEventListener("click", function() {
+              const id = this.getAttribute("data-id");
+              if (confirm("Are you sure you want to delete this game?")) {
+                fetch(`/games/${id}`, { method: "DELETE" })
+                .then(response => {
+                  if(response.ok) {
+                    fetchGameCards();
+                  } else {
+                    console.error("Delete failed");
+                  }
+                });
+              }
+            });
+          });
+        })
+        .catch(err => console.error(err));
+    }
+
+    // Search for games in Games Management.
+    function searchGame() {
+      const query = document.getElementById("game-search").value.toLowerCase();
+      fetch("/games")
+        .then(response => response.json())
+        .then(data => {
+          const adminID = document.getElementById("admin-id").value;
+          const container = document.getElementById("game-cards");
+          container.innerHTML = "";
+          const filteredGames = data.games.filter(game =>
+            game.name.toLowerCase().includes(query) &&
+            String(game.admin_id) === String(adminID)
+          );
+          filteredGames.forEach(game => {
+            const card = document.createElement("div");
+            card.className = "card";
+            card.innerHTML = `<h3>${game.name}</h3>
+                              <p>ID: ${game.id}</p>
+                              <p>Price: ₹${game.price}</p>
+                              <p>Category: ${game.category}</p>
+                              <p>Year: ${game.year}</p>
+                              <p>Admin ID: ${game.admin_id || ''}</p>
+                              <button class="edit-btn" data-id="${game.id}">Edit</button>
+                              <button class="delete-btn" data-id="${game.id}">Delete</button>`;
+            container.appendChild(card);
+          });
+          document.querySelectorAll(".edit-btn").forEach(btn => {
+            btn.addEventListener("click", function() {
+              const id = this.getAttribute("data-id");
+              const game = filteredGames.find(g => g.id == id);
+              showGameForm("edit", game);
+            });
+          });
+          document.querySelectorAll(".delete-btn").forEach(btn => {
+            btn.addEventListener("click", function() {
+              const id = this.getAttribute("data-id");
+              if (confirm("Are you sure you want to delete this game?")) {
+                fetch(`/games/${id}`, { method: "DELETE" })
+                .then(response => {
+                  if(response.ok) {
+                    searchGame();
+                  } else {
+                    console.error("Delete failed");
+                  }
+                });
+              }
+            });
+          });
+        })
+        .catch(err => console.error(err));
+    }
+
+    // Fetch and display transactions for current admin.
+    function fetchTransactions(username = "") {
+      const adminID = document.getElementById("admin-id").value;
+      let url = `/api/admin_transactions?admin_id=${encodeURIComponent(adminID)}`;
+      if (username) {
+        url += `&username=${encodeURIComponent(username)}`;
+      }
+      url += `&_=${new Date().getTime()}`; // Cache busting
+      fetch(url)
+        .then(response => response.json())
+        .then(transData => {
+          const transactionsGrid = document.getElementById("transactions-grid");
+          transactionsGrid.innerHTML = "";
+          transData.transactions.forEach(tx => {
+            const card = document.createElement("div");
+            card.className = "card";
+            card.innerHTML = `<h3>Transaction #${tx.id}</h3>
+                              <p>User: ${tx.user_name}</p>
+                              <p>Game: ${tx.game_name} (ID: ${tx.game_id})</p>
+                              <p>Email: ${tx.email}</p>
+                              <p>Price: ₹${parseFloat(tx.price).toFixed(2)}</p>
+                              <p>Date: ${new Date(tx.purchase_date).toLocaleString()}</p>`;
+            transactionsGrid.appendChild(card);
+          });
+        })
+        .catch(err => console.error(err));
+    }
+
+    // Calculate and display revenue for all transactions of the current admin's games.
+    function fetchRevenue() {
+      const adminID = document.getElementById("admin-id").value;
+      fetch("/games")
+        .then(response => response.json())
+        .then(data => {
+          const adminGames = data.games.filter(game => String(game.admin_id) === String(adminID));
+          const adminGameIDs = adminGames.map(game => game.id);
+          fetch("/api/transactions")
+            .then(response => response.json())
+            .then(transData => {
+              const filteredTransactions = transData.transactions.filter(tx =>
+                adminGameIDs.includes(tx.game_id)
+              );
+              const grouped = {};
+              filteredTransactions.forEach(tx => {
+                if (!grouped[tx.game_id]) {
+                  grouped[tx.game_id] = [];
+                }
+                grouped[tx.game_id].push(tx);
+              });
+              let html = `<table>
+                          <thead>
+                            <tr>
+                              <th>Game ID</th>
+                              <th>Game Name</th>
+                              <th>Transactions</th>
+                              <th>Total Revenue</th>
+                            </tr>
+                          </thead>
+                          <tbody>`;
+              let overallTotal = 0;
+              for (const gameId in grouped) {
+                const transactions = grouped[gameId];
+                const gameName = transactions[0].game_name;
+                const totalRevenue = transactions.reduce((sum, t) => sum + parseFloat(t.price), 0);
+                overallTotal += totalRevenue;
+                html += `<tr>
+                          <td>${gameId}</td>
+                          <td>${gameName}</td>
+                          <td>${transactions.length}</td>
+                          <td>₹${totalRevenue.toFixed(2)}</td>
+                         </tr>`;
+              }
+              html += `<tr>
+                          <td colspan="3"><strong>Overall Total Revenue</strong></td>
+                          <td><strong>₹${overallTotal.toFixed(2)}</strong></td>
+                       </tr>`;
+              html += `</tbody></table>`;
+              // Append a download button below the table.
+              html += `<br><button id="download-excel-btn" onclick="downloadRevenueExcel()">Download Excel</button>`;
+              document.getElementById("revenue-table-container").innerHTML = html;
+            })
+            .catch(err => console.error("Error fetching transactions:", err));
+        })
+        .catch(err => console.error("Error fetching games:", err));
+    }
+
+    // Calculate and display revenue for a specific game.
+    function fetchRevenueByGameName() {
+      const inputName = document.getElementById("revenue-game-search").value.trim();
+      if (!inputName) {
+        document.getElementById("revenue-table-container").innerHTML = `<p>Please enter a game name.</p>`;
+        return;
+      }
+      const adminID = document.getElementById("admin-id").value;
+      fetch("/games")
+        .then(response => response.json())
+        .then(data => {
+          const adminGames = data.games.filter(game => 
+            String(game.admin_id) === String(adminID) &&
+            game.name.toLowerCase().includes(inputName.toLowerCase())
+          );
+          if (adminGames.length === 0) {
+            document.getElementById("revenue-table-container").innerHTML = `<p>No matching game found.</p>`;
+            return;
+          }
+          const matchingGameIDs = adminGames.map(game => game.id);
+          fetch("/api/transactions")
+            .then(response => response.json())
+            .then(transData => {
+              const filteredTransactions = transData.transactions.filter(tx =>
+                matchingGameIDs.includes(tx.game_id)
+              );
+              const grouped = {};
+              filteredTransactions.forEach(tx => {
+                if (!grouped[tx.game_id]) {
+                  grouped[tx.game_id] = [];
+                }
+                grouped[tx.game_id].push(tx);
+              });
+              let html = `<table>
+                          <thead>
+                            <tr>
+                              <th>Game ID</th>
+                              <th>Game Name</th>
+                              <th>Transactions</th>
+                              <th>Total Revenue</th>
+                            </tr>
+                          </thead>
+                          <tbody>`;
+              let overallTotal = 0;
+              adminGames.forEach(game => {
+                const transactions = grouped[game.id] || [];
+                const totalRevenue = transactions.reduce((sum, t) => sum + parseFloat(t.price), 0);
+                overallTotal += totalRevenue;
+                html += `<tr>
+                          <td>${game.id}</td>
+                          <td>${game.name}</td>
+                          <td>${transactions.length}</td>
+                          <td>₹${totalRevenue.toFixed(2)}</td>
+                         </tr>`;
+              });
+              html += `<tr>
+                          <td colspan="3"><strong>Overall Total Revenue</strong></td>
+                          <td><strong>₹${overallTotal.toFixed(2)}</strong></td>
+                       </tr>`;
+              html += `</tbody></table>`;
+              html += `<br><button id="download-excel-btn" onclick="downloadRevenueExcel()">Download Excel</button>`;
+              document.getElementById("revenue-table-container").innerHTML = html;
+            })
+            .catch(err => console.error("Error fetching transactions:", err));
+        })
+        .catch(err => console.error("Error fetching games:", err));
+    }
+
+    // Download the revenue table as a CSV file (compatible with Excel).
+    function downloadRevenueExcel() {
+      var table = document.querySelector("#revenue-table-container table");
+      if (!table) {
+        alert("No revenue table available to download.");
+        return;
+      }
+      var rows = table.querySelectorAll("tr");
+      var csv = [];
+      for (var i = 0; i < rows.length; i++){
+        var cols = rows[i].querySelectorAll("td, th");
+        var rowData = [];
+        for (var j = 0; j < cols.length; j++){
+          rowData.push('"' + cols[j].innerText.replace(/"/g, '""') + '"');
+        }
+        csv.push(rowData.join(","));
+      }
+      var csv_string = csv.join("\n");
+      var filename = "revenue_table.csv";
+      // Create a Blob with a BOM to ensure Excel reads the file as UTF-8.
+      var blob = new Blob(["\ufeff", csv_string], { type: "text/csv;charset=utf-8;" });
+      if (navigator.msSaveBlob) { // IE 10+
+          navigator.msSaveBlob(blob, filename);
+      } else {
+          var link = document.createElement("a");
+          if (link.download !== undefined) {
+              var url = URL.createObjectURL(blob);
+              link.setAttribute("href", url);
+              link.setAttribute("download", filename);
+              link.style.visibility = 'hidden';
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+          }
+      }
+    }
+
+    // Show the Add/Edit Game form.
+    function showGameForm(mode, game = {}) {
+      const form = document.getElementById("game-form");
+      const title = document.getElementById("form-title");
+      form.style.display = "block";
+      const categorySelect = document.getElementById("game-category");
+      if (mode === "edit") {
+        title.textContent = "Edit Game";
+        document.getElementById("game-id").value = game.id;
+        document.getElementById("game-name").value = game.name;
+        document.getElementById("game-price").value = game.price;
+        document.getElementById("game-year").value = game.year || "";
+        document.getElementById("game-image-path").value = game.image_path || "";
+        const selectedCategories = game.category ? game.category.split(",") : [];
+        for (let option of categorySelect.options) {
+          option.selected = selectedCategories.includes(option.value);
+        }
+      } else {
+        title.textContent = "Add New Game";
+        document.getElementById("game-id").value = "";
+        document.getElementById("game-name").value = "";
+        document.getElementById("game-price").value = "";
+        document.getElementById("game-year").value = "";
+        document.getElementById("game-image-path").value = "";
+        for (let option of categorySelect.options) {
+          option.selected = false;
+        }
+      }
+    }
+
+    // Hide the game form.
+    function hideGameForm() {
+      document.getElementById("game-form").style.display = "none";
+    }
+
+    // Save game (add or update).
+    document.getElementById("save-game-btn").addEventListener("click", function() {
+      const id = document.getElementById("game-id").value;
+      const name = document.getElementById("game-name").value;
+      const price = document.getElementById("game-price").value;
+      const year = document.getElementById("game-year").value;
+      const image_path = document.getElementById("game-image-path").value;
+      const admin_id = document.getElementById("admin-id").value;
+      const categorySelect = document.getElementById("game-category");
+      const selectedCategories = Array.from(categorySelect.selectedOptions).map(option => option.value);
+      const payload = { name, price, category: selectedCategories, year, image_path, admin_id };
+
+      if (id) {
+        fetch(`/games/${id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        })
+        .then(response => {
+          if(response.ok) {
+            hideGameForm();
+            fetchGameCards();
+          } else {
+            console.error("Update failed");
+          }
+        });
+      } else {
+        fetch(`/games`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        })
+        .then(response => {
+          if(response.ok) {
+            hideGameForm();
+            fetchGameCards();
+          } else {
+            console.error("Add failed");
+          }
+        });
+      }
+    });
+
+    document.getElementById("cancel-game-btn").addEventListener("click", function() {
+      hideGameForm();
+    });
+
+    document.getElementById("add-game-btn").addEventListener("click", function() {
+      showGameForm("add");
+    });
+
+    document.getElementById("select-all-categories").addEventListener("click", function() {
+      const categorySelect = document.getElementById("game-category");
+      for (let option of categorySelect.options) {
+        option.selected = true;
+      }
+    });
+    document.getElementById("clear-categories").addEventListener("click", function() {
+      const categorySelect = document.getElementById("game-category");
+      for (let option of categorySelect.options) {
+        option.selected = false;
+      }
+    });
+
+    document.getElementById("transaction-search-btn").addEventListener("click", function() {
+      const username = document.getElementById("transaction-search").value.trim();
+      fetchTransactions(username);
+    });
+    document.getElementById("transaction-search").addEventListener("keyup", function(event) {
+      if (event.key === "Enter") {
+        const username = this.value.trim();
+        fetchTransactions(username);
+      }
+    });
+
+    // Game search button event.
+    document.getElementById("game-search-btn").addEventListener("click", function() {
+      searchGame();
+    });
+    document.getElementById("game-search").addEventListener("keyup", function(event) {
+      if (event.key === "Enter") {
+        searchGame();
+      }
+    });
+
+    // Sidebar navigation event.
+    document.querySelectorAll('.sidebar a').forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        document.querySelectorAll('.sidebar a').forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+        document.querySelectorAll('.section').forEach(section => section.classList.remove('active'));
+        const sectionId = this.getAttribute('data-section');
+        document.getElementById(sectionId).classList.add('active');
+
+        if (sectionId === "all-games") {
+          fetch("/games")
+            .then(response => response.json())
+            .then(data => {
+              const tbody = document.querySelector("#all-games tbody");
+              tbody.innerHTML = "";
+              const adminID = document.getElementById("admin-id").value;
+              data.games.filter(game => String(game.admin_id) === String(adminID))
+                        .forEach(game => {
+                const row = document.createElement("tr");
+                row.innerHTML = `<td>${game.id}</td>
+                                 <td>${game.name}</td>
+                                 <td>${game.price}</td>
+                                 <td>${game.category}</td>
+                                 <td>${game.year}</td>`;
+                tbody.appendChild(row);
+              });
+            })
+            .catch(err => console.error(err));
+        } else if (sectionId === "games") {
+          fetchGameCards();
+        } else if (sectionId === "transactions") {
+          fetchTransactions();
+        }
+      });
+    });
+
+    // Logout event.
+    document.getElementById('logout').addEventListener('click', function() {
+      window.location.href = "/";
+    });
+
+    // Revenue calculation button events.
+    document.getElementById("calc-revenue-by-game-btn").addEventListener("click", fetchRevenueByGameName);
+    document.getElementById("calc-revenue-btn").addEventListener("click", fetchRevenue);
+
+    // On page load, fetch admin ID then load the active section.
+    document.addEventListener("DOMContentLoaded", function() {
+      fetchAdminID().then(() => {
+        const activeSection = document.querySelector('.section.active').id;
+        if (activeSection === "games") {
+          fetchGameCards();
+        } else if (activeSection === "transactions") {
+          fetchTransactions();
+        }
+      });
+    });
+  </script>
+</body>
+</html>

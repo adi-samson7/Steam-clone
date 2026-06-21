@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Store - Categories</title>
+    <link rel="stylesheet" href="/statics/style.css" />
+    <style>
+      /* Additional styles for the store page that are not part of the header */
+      /* Global Styles */
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #1b2838;
+        color: #c7d5e0;
+      }
+      .container {
+        padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      h1.page-title {
+        text-align: center;
+        font-size: 2.5em;
+        margin-bottom: 30px;
+        color: #c7d5e0;
+      }
+      /* Search and Filter Section - Steam-Like */
+      #searchSection {
+        position: sticky;
+        top: 60px;
+        z-index: 1000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+        margin-top: 20px;
+        margin-bottom: 30px;
+      }
+      #searchSection input[type="text"] {
+        padding: 10px 15px;
+        font-size: 16px;
+        width: 250px;
+        border-radius: 4px;
+        border: 1px solid #3e4147;
+        background-color: #2a2f36;
+        color: #c7d5e0;
+        outline: none;
+      }
+      #searchSection input[type="text"]::placeholder {
+        color: #8a8d94;
+      }
+      #searchSection select {
+        padding: 10px 15px;
+        font-size: 16px;
+        border-radius: 4px;
+        border: 1px solid #3e4147;
+        background-color: #2a2f36;
+        color: #c7d5e0;
+        outline: none;
+      }
+      /* Slider Container (for arrows) */
+      .category-slider-container {
+        position: relative;
+        margin: 0 auto 30px auto;
+        max-width: 100%;
+      }
+      /* Category Cards Section as a Horizontal Slider */
+      #categorySection {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        gap: 20px;
+        scroll-snap-type: x mandatory;
+        padding: 20px;
+        box-sizing: border-box;
+      }
+      .category-card {
+        position: relative;
+        width: 200px;
+        height: 200px;
+        border-radius: 8px;
+        overflow: hidden;
+        cursor: pointer;
+        flex: 0 0 auto;
+        scroll-snap-align: start;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+      .category-card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.8);
+      }
+      .category-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .category-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          135deg,
+          rgba(227, 29, 29, 0.7) 0%,
+          rgba(227, 29, 29, 0.3) 100%
+        );
+        transform: skewX(-15deg) scale(1.5);
+        transform-origin: center;
+        pointer-events: none;
+      }
+      .category-card h3 {
+        position: absolute;
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        margin: 0;
+        padding: 5px 10px;
+        background: rgba(0, 0, 0, 0.7);
+        color: #fff;
+        border-radius: 5px;
+        font-size: 1em;
+        z-index: 1;
+        text-align: center;
+      }
+      /* Custom scrollbar for slider */
+      #categorySection::-webkit-scrollbar {
+        height: 8px;
+      }
+      #categorySection::-webkit-scrollbar-track {
+        background: #2a2f36;
+      }
+      #categorySection::-webkit-scrollbar-thumb {
+        background: #3e4147;
+        border-radius: 4px;
+      }
+      #categorySection::-webkit-scrollbar-thumb:hover {
+        background: #66c0f4;
+      }
+      /* Slider arrow buttons */
+      .slider-button {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: rgba(0, 0, 0, 0.5);
+        color: #fff;
+        border: none;
+        border-radius: 50%;
+        padding: 10px;
+        cursor: pointer;
+        z-index: 10;
+      }
+      .slider-button:hover {
+        background-color: rgba(0, 0, 0, 0.7);
+      }
+      .slider-button-prev {
+        left: 10px;
+      }
+      .slider-button-next {
+        right: 10px;
+      }
+      /* Games Listing Section */
+      #gamesSection {
+        display: none;
+      }
+      #gamesSection .back-button {
+        margin-bottom: 20px;
+        padding: 10px 20px;
+        cursor: pointer;
+        background: #66c0f4;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        transition: background 0.2s;
+      }
+      #gamesSection .back-button:hover {
+        background: #3a8edb;
+      }
+      /* Arrange search results in grid: Dynamic grid of 4 columns */
+      .games-list {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+      }
+      /* Games Listing Section - Game Card */
+      .game-card {
+        background-color: #1b2838;
+        border: 1px solid #3e4147;
+        border-radius: 8px;
+        padding: 15px;
+        text-align: center;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.7);
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+      .game-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.9);
+      }
+      .game-card img {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 5px;
+        margin-bottom: 10px;
+      }
+      .add-to-cart-btn {
+        margin-top: 10px;
+        padding: 10px 20px;
+        background-color: #66c0f4;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background 0.2s;
+      }
+      .add-to-cart-btn:hover {
+        background-color: #3a8edb;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header Section with exact same style and functions -->
+    <header>
+      <h1>GAME STORE</h1>
+      <nav>
+        <ul>
+          <li>
+            <a href="index.html#home" onclick="showSection('home')">Home</a>
+          </li>
+          <li><a href="store.html">Store</a></li>
+          <li>
+            <a
+              href="index.html#library"
+              onclick="showSection('library'); fetchLibrary();"
+              >My Library</a
+            >
+          </li>
+          <li>
+            <a href="#" onclick="redirectToCartPage()"
+              >Cart: <span id="cartCount">0</span> items</a
+            >
+          </li>
+          <li class="dropdown">
+            <a href="#" class="dropbtn">Account</a>
+            <div class="dropdown-content">
+              <a href="/profile">Profile</a>
+              <a href="/">Logout</a>
+            </div>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+      <h2 class="page-title"></h2>
+      <!-- Search and Filter Section -->
+      <div id="searchSection">
+        <input
+          type="text"
+          id="searchBar"
+          placeholder="Search for games..."
+          oninput="searchGames()"
+        />
+        <select id="categoryFilter" onchange="searchGames()">
+          <option value="">All Categories</option>
+          <option value="Action RPG">Action RPG</option>
+          <option value="Fighting">Fighting</option>
+          <option value="Horror">Horror</option>
+          <option value="Open World">Open World</option>
+          <option value="Sports">Sports</option>
+          <option value="Free to Play">Free to Play</option>
+          <option value="Racing">Racing</option>
+        </select>
+      </div>
+
+      <!-- Category Slider Container with Arrow Buttons -->
+      <div class="category-slider-container">
+        <button
+          class="slider-button slider-button-prev"
+          onclick="scrollCategory('prev')"
+        >
+          &#10094;
+        </button>
+        <div id="categorySection">
+          <div class="category-card" onclick="showGames('Action RPG')">
+            <img src="/statics/images/category/casual.jpg" alt="Action RPG" />
+            <h3>Action RPG</h3>
+          </div>
+          <div class="category-card" onclick="showGames('Fighting')">
+            <img
+              src="/statics/images/category/exploration_open_world.jpg"
+              alt="Fighting"
+            />
+            <h3>Fighting</h3>
+          </div>
+          <div class="category-card" onclick="showGames('Horror')">
+            <img src="/statics/images/category/anime.jpg" alt="Horror" />
+            <h3>Horror</h3>
+          </div>
+          <div class="category-card" onclick="showGames('Open World')">
+            <img
+              src="/statics/images/category/exploration_open_world.jpg"
+              alt="Open World"
+            />
+            <h3>Open World</h3>
+          </div>
+          <div class="category-card" onclick="showGames('Sports')">
+            <img src="/statics/images/category/casual.jpg" alt="Sports" />
+            <h3>Sports</h3>
+          </div>
+          <div class="category-card" onclick="showGames('Free to Play')">
+            <img
+              src="/statics/images/category/freetoplay.jpg"
+              alt="Free to Play"
+            />
+            <h3>Free to Play</h3>
+          </div>
+          <div class="category-card" onclick="showGames('Racing')">
+            <img src="/statics/images/category/casual.jpg" alt="Racing" />
+            <h3>Racing</h3>
+          </div>
+        </div>
+        <button
+          class="slider-button slider-button-next"
+          onclick="scrollCategory('next')"
+        >
+          &#10095;
+        </button>
+      </div>
+
+      <!-- Games Listing Section -->
+      <div id="gamesSection">
+        <button class="back-button" onclick="backToCategories()">
+          Back to Categories
+        </button>
+        <h2 id="gamesCategoryTitle"></h2>
+        <div id="gamesList" class="games-list">
+          <!-- Games will be dynamically loaded here and arranged in a grid of 4 columns -->
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Global variable to store games fetched from the database grouped by category
+      let gamesData = {};
+
+      // Cart Array to store the added items (loaded from localStorage)
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+      function updateCartCount() {
+        document.getElementById("cartCount").textContent = cart.length;
+      }
+
+      function redirectToCartPage() {
+        localStorage.setItem("cart", JSON.stringify(cart));
+        window.location.href = "cart.html";
+      }
+
+      // Fetch games from the API and group them by category.
+      function fetchGames() {
+        fetch("/games")
+          .then((response) => response.json())
+          .then((data) => {
+            gamesData = {};
+            data.games.forEach((game) => {
+              let categories = [];
+              if (typeof game.category === "string") {
+                categories = game.category.split(",").map((cat) => cat.trim());
+              } else if (Array.isArray(game.category)) {
+                categories = game.category;
+              } else {
+                categories = [game.category];
+              }
+              categories.forEach((cat) => {
+                if (!gamesData[cat]) {
+                  gamesData[cat] = [];
+                }
+                gamesData[cat].push(game);
+              });
+            });
+            updateButtons();
+          })
+          .catch((error) => console.error("Error fetching games:", error));
+      }
+
+      function searchGames() {
+        const searchQuery = document
+          .getElementById("searchBar")
+          .value.toLowerCase();
+        const selectedCategory =
+          document.getElementById("categoryFilter").value;
+
+        document.getElementById("categorySection").style.display = "none";
+        document.querySelector(".slider-button-prev").style.display = "none";
+        document.querySelector(".slider-button-next").style.display = "none";
+        document.getElementById("gamesSection").style.display = "block";
+        document.getElementById("gamesCategoryTitle").textContent =
+          selectedCategory || "All Available Games";
+
+        const gamesList = document.getElementById("gamesList");
+        gamesList.innerHTML = "";
+
+        let filteredGames = [];
+        if (selectedCategory) {
+          filteredGames = (gamesData[selectedCategory] || []).filter((game) =>
+            game.name.toLowerCase().includes(searchQuery)
+          );
+        } else {
+          let gamesMap = {};
+          Object.values(gamesData).forEach((categoryGames) => {
+            categoryGames.forEach((game) => {
+              if (game.name.toLowerCase().includes(searchQuery)) {
+                gamesMap[game.id] = game;
+              }
+            });
+          });
+          filteredGames = Object.values(gamesMap);
+        }
+
+        if (filteredGames.length === 0) {
+          gamesList.innerHTML = "<p>No games found matching your criteria.</p>";
+          return;
+        }
+
+        filteredGames.forEach((game) => {
+          const card = document.createElement("div");
+          card.classList.add("game-card");
+          card.innerHTML = `
+          <img src="${
+            game.image_path || "/statics/images/placeholder.jpg"
+          }" alt="${game.name}">
+          <h3>${game.name}</h3>
+          <p>₹${game.price}</p>
+          <button class="add-to-cart-btn" onclick="addToCart(${
+            game.id
+          })">Add to Cart</button>
+        `;
+          gamesList.appendChild(card);
+        });
+
+        updateButtons();
+      }
+
+      function addToCart(gameId) {
+        const game = Object.values(gamesData)
+          .flat()
+          .find((g) => g.id === gameId);
+
+        if (!cart.some((g) => g.id === gameId)) {
+          cart.push(game);
+          localStorage.setItem("cart", JSON.stringify(cart));
+          alert(`${game.name} has been added to your cart!`);
+          updateCartCount();
+          updateButtons();
+        }
+      }
+
+      function updateButtons() {
+        document.querySelectorAll(".add-to-cart-btn").forEach((button) => {
+          const gameId = parseInt(
+            button.getAttribute("onclick").match(/\d+/)[0]
+          );
+          if (cart.some((g) => g.id === gameId)) {
+            button.textContent = "In Cart";
+            button.style.backgroundColor = "#6c757d";
+            button.style.cursor = "default";
+            button.disabled = true;
+          } else {
+            button.textContent = "Add to Cart";
+            button.style.backgroundColor = "#66c0f4";
+            button.style.cursor = "pointer";
+            button.disabled = false;
+          }
+        });
+      }
+
+      function showGames(category) {
+        document.getElementById("categorySection").style.display = "flex";
+        document.querySelector(".slider-button-prev").style.display = "block";
+        document.querySelector(".slider-button-next").style.display = "block";
+        document.getElementById("gamesSection").style.display = "block";
+        document.getElementById("gamesCategoryTitle").textContent = category;
+
+        const gamesList = document.getElementById("gamesList");
+        gamesList.innerHTML = "";
+
+        if (gamesData[category]) {
+          gamesData[category].forEach((game) => {
+            const card = document.createElement("div");
+            card.classList.add("game-card");
+            card.innerHTML = `
+            <img src="${
+              game.image_path || "/statics/images/placeholder.jpg"
+            }" alt="${game.name}">
+            <h3>${game.name}</h3>
+            <p>₹${game.price}</p>
+            <button class="add-to-cart-btn" onclick="addToCart(${
+              game.id
+            })">Add to Cart</button>
+          `;
+            gamesList.appendChild(card);
+          });
+        } else {
+          gamesList.innerHTML = "<p>No games available in this category.</p>";
+        }
+
+        updateButtons();
+      }
+
+      function backToCategories() {
+        document.getElementById("gamesSection").style.display = "none";
+        document.getElementById("categorySection").style.display = "flex";
+        document.querySelector(".slider-button-prev").style.display = "block";
+        document.querySelector(".slider-button-next").style.display = "block";
+      }
+
+      function scrollCategory(direction) {
+        const container = document.getElementById("categorySection");
+        const scrollAmount = 300;
+        if (direction === "prev") {
+          container.scrollBy({ top: 0, left: -scrollAmount, behavior: "smooth" });
+        } else {
+          container.scrollBy({ top: 0, left: scrollAmount, behavior: "smooth" });
+        }
+      }
+
+      window.onload = function () {
+        updateCartCount();
+        fetchGames();
+      };
+
+      // Dummy implementations for showSection and fetchLibrary.
+      function showSection(sectionId) {
+        console.log("Showing section:", sectionId);
+      }
+      function fetchLibrary() {
+        console.log("Fetching library");
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,544 @@
+/* Steam-Like Dark Theme */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+}
+
+body {
+    background-color: #1b2838;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    overflow-x: hidden;
+    padding-top: 70px;
+    margin: 0;
+}
+
+/* Header */
+header {
+    background: #171a21;
+    padding: 15px 20px;
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+header h1 {
+    font-size: 24px;
+    color: #66c0f4;
+    flex: 1;
+    text-align: left;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+nav ul li {
+    margin: 0 15px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #c7d5e0;
+    font-size: 18px;
+    transition: color 0.3s ease;
+}
+
+nav ul li a:hover {
+    color: #66c0f4;
+}
+
+/* Main Layout */
+main {
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 1000px;
+}
+
+/* Sections */
+.section {
+    display: none;
+    width: 100%;
+}
+
+.section.active {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    text-align: center;
+}
+
+.section-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Sliders */
+.slider-container {
+    position: relative;
+    width: 110%;
+    max-width: 1200px;
+    height: 400px;
+    margin: 20px auto;
+    overflow: hidden;
+    background: #1b2838;
+    border-radius: 8px;
+    padding: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+}
+
+.slider {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.slide {
+    min-width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #16202d;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    gap: 10px;
+    height: 100%;
+}
+
+/* Game Image */
+.game-image {
+    width: 616px;
+    height: 353px;
+    object-fit: cover;
+    border-radius: 5px;
+    transition: transform 0.3s ease;
+}
+
+.game-image:hover {
+    transform: scale(1.02);
+}
+
+.game-info {
+    width: 314px;
+    height: 353px;
+    padding: 15px;
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.8), transparent);
+    color: #fff;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.game-info h2 {
+    font-size: 22px;
+    font-weight: bold;
+    white-space: normal;
+    word-wrap: break-word;
+    text-overflow: ellipsis;
+    overflow: visible;
+    display: block;
+}
+
+.game-thumbnails {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, auto);
+    gap: 5px;
+    width: 100%;
+    max-width: 284px;
+}
+
+.game-thumbnails img {
+    width: 138px;
+    height: 64px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    object-fit: cover;
+}
+
+.game-thumbnails img:hover {
+    transform: scale(1.1);
+}
+
+/* Discount and Price */
+.discount {
+    background: #66c0f4;
+    color: #1b2838;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 5px 8px;
+    border-radius: 3px;
+}
+
+.price {
+    font-size: 20px;
+    font-weight: bold;
+    color: #a4d007;
+}
+
+/* Navigation Buttons */
+.prev, .next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 5px;
+    transition: background 0.3s;
+}
+
+.prev:hover, .next:hover {
+    background: rgba(0, 0, 0, 0.8);
+}
+
+.prev {
+    left: 10px;
+}
+
+.next {
+    right: 10px;
+}
+
+/* Pagination Dots */
+.pagination {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    background: #5a7d9a;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.dot.active {
+    background: #fff;
+}
+
+/* Cart */
+#cart-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 20px;
+    background: #2a475e;
+    padding: 20px;
+    border-radius: 5px;
+    width: 100%;
+    max-width: 800px;
+}
+
+.cart-item {
+    background: #2a475e;
+    padding: 15px;
+    border-radius: 8px;
+    color: #c7d5e0;
+    font-size: 16px;
+    min-width: 150px;
+    cursor: pointer;
+    transition: transform 0.3s, background 0.3s;
+}
+
+.store-item:hover, .cart-item:hover {
+    background: #66c0f4;
+    color: #000;
+    transform: scale(1.05);
+}
+
+/* Buttons */
+button {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    padding: 10px;
+    font-size: 20px;
+    color: white;
+    cursor: pointer;
+    border-radius: 3px;
+    margin-top: 10px;
+    transition: background 0.3s ease;
+}
+
+button:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    nav ul {
+        margin-top: 10px;
+    }
+
+    .category-card, .game-card {
+        min-width: 100px;
+        font-size: 14px;
+    }
+
+    .prev-category, .next-category, .prev, .next {
+        padding: 8px;
+        font-size: 20px;
+    }
+}
+
+/* ========== CATEGORY SLIDER STYLES (ADDED) ========== */
+.category-slider-container {
+    position: relative;
+    margin: 0 auto;
+    width: 90%;
+    max-width: 1000px;
+    overflow: hidden; /* hides scrollbars/arrows */
+    margin-top: 20px;
+}
+
+.category-slider {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scrollbar-width: none; /* for Firefox */
+    padding: 20px 0;
+}
+.category-slider::-webkit-scrollbar {
+    display: none; /* for Chrome, Safari, etc. */
+}
+
+/* The slider buttons are .slider-btn plus .left-btn/.right-btn. 
+   They need a bit of offset so they don't clash. */
+.slider-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    z-index: 9999;
+    color: #ffffff;
+    font-size: 24px;
+    border-radius: 50%;
+    transition: background 0.3s;
+}
+
+.slider-btn:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+/* Minimal fix: offset each side */
+.prev-category {
+    left: 10px; /* Ensures left arrow is 10px from left edge */
+    right: auto; /* override any right value */
+}
+
+.next-category {
+    right: 10px; /* Ensures right arrow is 10px from right edge */
+    left: auto;  /* override any left value */
+}
+
+.category-card {
+    position: relative;
+    width: 200px;
+    height: 300px;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    text-align: center;
+    color: #fff;
+    flex: 0 0 auto;
+    transition: transform 0.3s ease;
+}
+
+.category-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.category-card:hover {
+    transform: scale(1.05);
+}
+
+.category-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: rgba(237, 27, 36, 0.6);
+    width: 100%;
+    height: 100%;
+    transition: background 0.3s ease;
+}
+
+.category-card:hover .category-overlay {
+    background: rgba(237, 27, 36, 0.8);
+}
+
+.category-card h3 {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 18px;
+    text-transform: uppercase;
+    margin: 0;
+}
+
+/* Category Page Styles */
+#category-page {
+    width: 100%;
+    margin-top: 20px;
+}
+
+#category-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.games-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    background: #2a475e;
+    padding: 20px;
+    border-radius: 5px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.games-grid .game-card {
+    background: #2a475e;
+    padding: 15px;
+    border-radius: 8px;
+    color: #c7d5e0;
+    font-size: 16px;
+    min-width: 150px;
+    cursor: pointer;
+    transition: transform 0.3s, background 0.3s;
+    text-align: center;
+}
+
+.games-grid .game-card:hover {
+    background: #66c0f4;
+    color: #000;
+    transform: scale(1.05);
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropbtn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #333;
+    min-width: 160px;
+    z-index: 1;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.dropdown-content a {
+    color: #fff;
+    padding: 10px 15px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {
+    background-color: #555;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.cart-summary {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #222; /* or any color you prefer */
+    color: #fff;
+    border-radius: 5px;
+    width: 300px; /* adjust as needed */
+  }
+  
+  .cart-summary h3 {
+    margin-top: 0;
+  }
+  
+  .cart-summary p {
+    margin: 5px 0;
+  }
+  
+  .cart-summary button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #1c6fda;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  
+  .cart-summary button:hover {
+    background-color: #145cad;
+  }
+  

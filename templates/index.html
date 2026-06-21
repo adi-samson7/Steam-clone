@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game Store</title>
+  <link rel="stylesheet" href="/statics/style.css">
+  <style>
+    /* Library Grid */
+    .library-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 1rem;
+    }
+    
+    /* Each Card */
+    .library-card {
+      background-color: #1b1b1b;
+      border: 1px solid #333;
+      border-radius: 4px;
+      width: 160px; /* Adjust as needed */
+      text-align: center;
+      padding: 1rem;
+      position: relative;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    /* Hover effect for Game Cards */
+    .library-card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    }
+    
+    /* Game Image */
+    .library-game-image {
+      width: 100%;
+      height: auto;
+      border-radius: 4px;
+      margin-bottom: 0.5rem;
+    }
+    
+    /* Game Name */
+    .library-card h3 {
+      margin: 0;
+      font-size: 1rem;
+      color: #fff;
+    }
+    
+    /* Install Button added to each game card */
+    .library-card::after {
+      content: "Install";
+      display: block;
+      background-color: #4CAF50;
+      color: white;
+      text-align: center;
+      padding: 0.5rem;
+      border-radius: 4px;
+      margin-top: 0.5rem;
+      cursor: pointer;
+      font-size: 0.9rem;
+      pointer-events: auto;
+    }
+    
+    /* Hover effect for Install Button */
+    .library-card:hover::after {
+      background-color: #45a049;
+    }
+    
+    /* On-click effect: change button color when the card is active (clicked) */
+    .library-card:active::after {
+      background-color: #008CBA;
+    }
+    
+    /* ===== NEW RELEASE SLIDER STYLES ===== */
+    .slider-container {
+      position: relative;
+      width: 120%;
+      max-width: 900px;
+      margin: 1rem auto;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .slider {
+      display: flex;
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .slide, .new-release-slide {
+      width: 100%;
+      display: none;
+      gap: 1rem;
+      align-items: center;
+      justify-content: center;
+      background: #16202d;
+      border-radius: 8px;
+      padding: 15px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+    
+    .new-release-slide img.game-image {
+      width: 100%;          /* Full width of container */
+      height: 300px;         /* Fixed height */
+      object-fit: cover;     /* Crop overflow */
+      border-radius: 5px;
+    }
+    
+    .new-release-slide .game-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      color: #fff;
+      width: 50%;
+      text-align: left;
+    }
+    
+    .new-release-slide .game-thumbnails {
+      display: flex;
+      gap: 0.5rem;
+    }
+    
+    .new-release-slide .game-thumbnails img {
+      width: 60px;
+      border-radius: 3px;
+    }
+    
+    .new-release-slide button {
+      padding: 0.5rem 1rem;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+      margin-top: 0.5rem;
+    }
+    
+    .new-release-slide button:hover {
+      background-color: #45a049;
+    }
+    
+    .slider-container .prev,
+    .slider-container .next {
+      cursor: pointer;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, 0.6);
+      color: #fff;
+      border: none;
+      font-size: 24px;
+      padding: 10px;
+      border-radius: 5px;
+      z-index: 2;
+      transition: background 0.3s;
+    }
+    
+    .slider-container .prev:hover,
+    .slider-container .next:hover {
+      background: rgba(0, 0, 0, 0.8);
+    }
+    
+    .slider-container .prev {
+      left: 10px;
+    }
+    
+    .slider-container .next {
+      right: 10px;
+    }
+    /* ===== END NEW RELEASE SLIDER STYLES ===== */
+  </style>
+</head>
+<body>
+  <header>
+    <h1>GAME STORE</h1>
+    <nav>
+      <ul>
+        <li><a href="#home" onclick="showSection('home')">Home</a></li>
+        <li><a href="store.html">Store</a></li>
+        <!-- My Library is now a separate navigation item -->
+        <li><a href="index.html#library" onclick="showSection('library'); fetchLibrary();">My Library</a></li>
+        <li class="dropdown">
+          <a href="#" class="dropbtn">Account</a>
+          <div class="dropdown-content">
+            <a href="/profile">Profile</a>
+            <a href="/">Logout</a>
+          </div>
+        </li>
+      </ul>
+    </nav>
+  </header>
+  
+  <main>
+    <section id="home" class="section active">
+      <!-- Featured & Recommended Slider -->
+    
+
+      <!-- NEW RELEASE Slider -->
+      <h3>NEW RELEASE</h3>
+      <div class="slider-container">
+        <button class="prev" onclick="changeNewReleaseSlide(-1)">&#10094;</button>
+        <div class="slider" id="new-release-slider"></div>
+        <button class="next" onclick="changeNewReleaseSlide(1)">&#10095;</button>
+      </div>
+    </section>
+    
+    <!-- Library Section -->
+    <section id="library" class="section" style="display: none;">
+      <h2>My Library</h2>
+      <div id="library-grid" class="library-grid">
+        <!-- Library cards will be injected here -->
+      </div>
+    </section>
+  </main>
+  
+  <script>
+    // Global cart variable initialization: load from localStorage if available, else start with empty array.
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    // INITIALIZE: Call necessary functions on DOMContentLoaded
+    document.addEventListener("DOMContentLoaded", function () {
+      let initialSection = window.location.hash ? window.location.hash.substring(1) : 'home';
+      showSection(initialSection);
+      updateCartCount();
+      loadStore();
+      loadCart();
+      updateCategoryButtons();
+      fetchGames(); // Fetch games from backend
+      loadCart();
+      updateCategoryButtons();
+
+      // Load new releases for the new release slider container
+      loadNewReleases();
+    });
+
+    function showSection(sectionId) {
+      document.querySelectorAll('.section').forEach(section => {
+        section.style.display = 'none';
+      });
+      const selectedSection = document.getElementById(sectionId);
+      if (selectedSection) {
+        selectedSection.style.display = 'flex';
+        selectedSection.style.flexDirection = 'column';
+        selectedSection.style.alignItems = 'center';
+        selectedSection.style.justifyContent = 'center';
+        selectedSection.style.width = '100%';
+      }
+      if (sectionId === 'store') loadStore();
+      if (sectionId === 'cart') loadCart();
+      if (sectionId === 'library') fetchLibrary();
+    }
+
+    const categorySlider = document.querySelector('.category-slider');
+    const prevCategoryBtn = document.querySelector('.left-btn');
+    const nextCategoryBtn = document.querySelector('.right-btn');
+
+    function updateCategoryButtons() {
+      if (!categorySlider) return;
+      prevCategoryBtn.style.display = categorySlider.scrollLeft > 0 ? 'block' : 'none';
+      nextCategoryBtn.style.display =
+          categorySlider.scrollLeft + categorySlider.clientWidth < categorySlider.scrollWidth ? 'block' : 'none';
+    }
+
+    function scrollCategories(direction) {
+      const cardWidth = document.querySelector('.category-card').offsetWidth + 10;
+      const visibleCards = 6; 
+      categorySlider.scrollBy({ left: direction * cardWidth * visibleCards, behavior: 'smooth' });
+      setTimeout(updateCategoryButtons, 500);
+    }
+
+    if (categorySlider) {
+      categorySlider.addEventListener('scroll', updateCategoryButtons);
+    }
+
+    const slides = document.querySelectorAll('.slide');
+    let currentSlide = 0;
+
+    function changeSlide(direction) {
+      slides[currentSlide].style.display = "none"; 
+      currentSlide = (currentSlide + direction + slides.length) % slides.length;
+      slides[currentSlide].style.display = "flex";
+      slides[currentSlide].style.alignItems = "center";
+      slides[currentSlide].style.justifyContent = "center";
+    }
+
+    setInterval(() => {
+      changeSlide(1);
+    }, 3000);
+
+    document.addEventListener("DOMContentLoaded", () => {
+      slides.forEach((slide, index) => {
+        slide.style.display = index === 0 ? "flex" : "none";
+        slide.style.alignItems = "center";
+        slide.style.justifyContent = "center";
+      });
+    });
+
+    async function fetchGames() {
+      try {
+        const response = await fetch("http://127.0.0.1:8000/games");
+        if (!response.ok) throw new Error("Failed to fetch games.");
+        const data = await response.json();
+        localStorage.setItem("games", JSON.stringify(data.games));
+        loadStore();
+      } catch (error) {
+        console.error("Error fetching games:", error);
+      }
+    }
+
+    function loadStore() {
+      const storeContainer = document.getElementById("store-items");
+      if (!storeContainer) return;
+      storeContainer.innerHTML = "";
+      storeContainer.style.display = "flex";
+      storeContainer.style.flexWrap = "wrap";
+      storeContainer.style.justifyContent = "center";
+
+      let games = JSON.parse(localStorage.getItem("games")) || [];
+      let filteredGames = currentCategory === "all" ? games : games.filter(game => game.category.includes(currentCategory));
+
+      filteredGames.forEach(game => {
+        let gameCard = document.createElement("div");
+        gameCard.classList.add("game-card");
+        // Note: Passing event as the first argument to addToCart.
+        gameCard.innerHTML = `
+          <h3>${game.name}</h3>
+          <p><strong>Category:</strong> ${game.category}</p>
+          <p><strong>Year:</strong> ${game.year}</p>
+          <p><strong>Price:</strong> ₹${game.price.toFixed(2)}</p>
+          <button onclick="addToCart(event, ${game.id})">
+            ${isInCart(game.id) ? "In Cart" : "Add to Cart"}
+          </button>
+        `;
+        storeContainer.appendChild(gameCard);
+      });
+    }
+
+    function showCategory(categoryName) {
+      currentCategory = categoryName;
+      showSection("store");
+    }
+
+    function showCategoryPage(category) {
+      fetch(`http://127.0.0.1:8000/games/${encodeURIComponent(category)}`)
+          .then(response => response.json())
+          .then(data => {
+            let categoryGamesContainer = document.getElementById("category-games");
+            categoryGamesContainer.innerHTML = "";
+            if (data.message) {
+              categoryGamesContainer.innerHTML = `<p>${data.message}</p>`;
+              return;
+            }
+            data.games.forEach(game => {
+              let gameCard = document.createElement("div");
+              gameCard.classList.add("game-card");
+              gameCard.innerHTML = `
+                <h3>${game.name}</h3>
+                <p>Price: ₹${game.price.toFixed(2)}</p>
+                <button class="add-to-cart" data-id="${game.id}" onclick="addToCart(event, ${game.id})">
+                  ${isInCart(game.id) ? "In Cart" : "Add to Cart"}
+                </button>
+              `;
+              categoryGamesContainer.appendChild(gameCard);
+            });
+            document.querySelectorAll(".section").forEach(section => section.style.display = "none");
+            document.getElementById("category-page").style.display = "block";
+            document.getElementById("category-title").innerText = category;
+          })
+          .catch(error => console.error("Error fetching category games:", error));
+    }
+
+    function scrollLeft(id) {
+      document.getElementById(id).scrollBy({ left: -220, behavior: 'smooth' });
+    }
+
+    function scrollRight(id) {
+      document.getElementById(id).scrollBy({ left: 220, behavior: 'smooth' });
+    }
+
+    function fetchLibrary() {
+      const currentUser = {
+        username: sessionStorage.getItem("user_name"),
+        email: sessionStorage.getItem("user_email")
+      };
+      if (!currentUser.email) {
+        alert("Please login to view your library.");
+        return;
+      }
+      fetch(`http://127.0.0.1:8000/api/user-library?email=${encodeURIComponent(currentUser.email)}`)
+          .then(response => response.json())
+          .then(data => {
+            const libraryGrid = document.getElementById("library-grid");
+            libraryGrid.innerHTML = "";
+            if (data.library && data.library.length > 0) {
+              data.library.forEach(item => {
+                const card = document.createElement("div");
+                card.classList.add("library-card");
+                card.innerHTML = `
+                  <img src="${item.game_image_path || '/statics/images/placeholder.jpg'}"
+                       alt="${item.game_name}" 
+                       class="library-game-image">
+                  <h3>${item.game_name}</h3>
+                `;
+                libraryGrid.appendChild(card);
+              });
+            } else {
+              libraryGrid.innerHTML = "<p>You haven't purchased any games yet.</p>";
+            }
+          })
+          .catch(error => console.error("Error fetching library:", error));
+    }
+
+    let newReleaseIndex = 0;
+    async function loadNewReleases() {
+      try {
+        const response = await fetch("http://127.0.0.1:8000/games");
+        if (!response.ok) throw new Error("Failed to fetch games.");
+        const data = await response.json();
+        console.log("Fetched games for new releases:", data);  // Debug log
+        const allGames = data.games || [];
+        const sortedGames = allGames.sort((a, b) => b.id - a.id);
+        const lastFive = sortedGames.slice(0, 5);
+        console.log("Last five games for new release:", lastFive);  // Debug log
+        let html = "";
+        lastFive.forEach((game, index) => {
+          html += `
+            <div class="slide new-release-slide"
+                 style="display: ${index === 0 ? 'flex' : 'none'}; align-items: center; justify-content: center;">
+              <img src="${game.image_path || '/statics/images/placeholder.jpg'}" class="game-image" alt="${game.name}">
+              <div class="game-info">
+                <h2>${game.name}</h2>
+                <div class="game-thumbnails">
+                  <img src="${game.image_path || '/statics/images/placeholder.jpg'}" alt="Thumb 1">
+                  <img src="${game.image_path || '/statics/images/placeholder.jpg'}" alt="Thumb 2">
+                  <img src="${game.image_path || '/statics/images/placeholder.jpg'}" alt="Thumb 3">
+                  <img src="${game.image_path || '/statics/images/placeholder.jpg'}" alt="Thumb 4">
+                </div>
+                <p>Now Available</p>
+                <!-- Added price display -->
+                <p><strong>Price:</strong> ₹${game.price.toFixed(2)}</p>
+                <button onclick="addToCart(event, ${game.id})">Add to Cart</button>
+              </div>
+            </div>
+          `;
+        });
+        document.getElementById("new-release-slider").innerHTML = html;
+
+        // Auto-slide every 5 seconds
+        setInterval(() => changeNewReleaseSlide(1), 5000);
+
+      } catch (error) {
+        console.error("Error fetching new releases:", error);
+      }
+    }
+    
+    function changeNewReleaseSlide(direction) {
+      const newReleaseSlides = document.querySelectorAll(".new-release-slide");
+      newReleaseSlides[newReleaseIndex].style.display = "none";
+      newReleaseIndex = (newReleaseIndex + direction + newReleaseSlides.length) % newReleaseSlides.length;
+      newReleaseSlides[newReleaseIndex].style.display = "flex";
+      newReleaseSlides[newReleaseIndex].style.alignItems = "center";
+      newReleaseSlides[newReleaseIndex].style.justifyContent = "center";
+    }
+    
+    // Minimal implementation of updateCartCount.
+    // (You can expand this if you have a visible cart counter.)
+    function updateCartCount() {
+      // For example, if you add an element to the header to show count.
+      console.log("Cart count:", cart.length);
+    }
+
+    // Modified addToCart function: now accepts the event object and id.
+    function addToCart(e, id) {
+      // Get all games from localStorage.
+      const games = JSON.parse(localStorage.getItem("games")) || [];
+      const game = games.find(g => g.id === id);
+      if (!game) {
+        console.error("Game not found.");
+        return;
+      }
+      // Check if the game is already in the cart.
+      if (!cart.some(g => g.id === id)) {
+        cart.push(game);
+        localStorage.setItem("cart", JSON.stringify(cart));
+        // Change the button text to "In Cart" and disable it.
+        e.target.textContent = "In Cart";
+        e.target.disabled = true;
+        alert(`${game.name} has been added to your cart!`);
+        updateCartCount();
+      } else {
+        alert(`${game.name} is already in your cart!`);
+      }
+    }
+
+    // Placeholder function for loadCart (expand as needed)
+    function loadCart() {}
+  </script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Modern Login Page</title>
+  <!-- Link to external CSS -->
+  <link rel="stylesheet" href="/statics/log_styles.css">
+  <script src="/statics/login.js"></script>
+  <!-- No "action" or "method" on the form; JavaScript handles submission -->
+</head>
+<body>
+
+  <div class="container">
+    <!-- Left panel (illustration / background) -->
+    <div class="left-panel">
+      <img src="/statics/images/login/nightcity.jpg" alt="nightcity" class="nightcity">
+    </div>
+
+    <!-- Right panel (login form) -->
+    <div class="right-panel">
+      <!-- ID only, no action/method attributes -->
+      <form id="loginForm">
+        <h2 class="form-title">Login to Your Account</h2>
+
+        <!-- Role selection -->
+        <div class="role-selector">
+          <label>
+            <input type="radio" name="role" value="user" checked> User
+          </label>
+          <label>
+            <input type="radio" name="role" value="admin"> Admin
+          </label>
+        </div>
+
+        <!-- Email -->
+        <label for="email">Email Address</label>
+        <input type="email" id="email" placeholder="Enter your email" required>
+
+        <!-- Password + Eye Icon -->
+        <label for="password">Password</label>
+        <div class="password-container">
+          <input type="password" id="password" placeholder="Enter your password" required>
+          <button type="button" id="togglePassword" class="eye-icon">&#128065;</button>
+        </div>
+
+        <!-- Forgot password link (optional) -->
+        <!-- <a href="#" class="forgot-link">Forgot password?</a> -->
+        
+        <!-- Sign in button -->
+        <button type="submit" class="login-btn">Sign in</button>
+
+        <!-- Link to create a new account -->
+        <p class="create-account">
+          Don't have an account? <a href="/register.html">Create a new account</a>
+        </p>
+
+        <!-- Message display (success/failure) -->
+        <p id="message"></p>
+      </form>
+    </div>
+  </div>
+
+</body>
+</html>

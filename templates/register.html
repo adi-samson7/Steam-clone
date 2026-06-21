@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Create New Account</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      color: #333;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    /* Card Container for Account Type Selection */
+    .card-container {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    .card {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 6px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      width: 200px;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+    .card:hover {
+      transform: scale(1.05);
+    }
+    .card h2 {
+      margin-bottom: 10px;
+    }
+    .card p {
+      font-size: 14px;
+    }
+    /* Registration Form Styling */
+    .container {
+      width: 100%;
+      max-width: 400px;
+      padding: 20px;
+    }
+    form {
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 6px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      width: 100%;
+      box-sizing: border-box;
+    }
+    form h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    .input-container {
+      position: relative;
+      width: 100%;
+      margin-top: 5px;
+    }
+    input[type="password"] {
+      width: 100%;
+      padding: 10px 40px 10px 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    input[type="text"],
+    input[type="tel"],
+    input[type="email"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    .eye-icon {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 18px;
+      padding: 0;
+    }
+    button[type="submit"] {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 4px;
+      background-color: #007BFF;
+      color: #fff;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button[type="submit"]:hover {
+      background-color: #0056b3;
+    }
+    .login-link {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .login-link a {
+      text-decoration: none;
+      color: #007BFF;
+    }
+    #message, #userMessage {
+      margin-top: 15px;
+      text-align: center;
+      color: red;
+    }
+    /* Hide form containers initially */
+    #userFormContainer, #adminFormContainer {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- Account Type Selection Cards -->
+  <div id="choiceContainer" class="card-container">
+    <div class="card" onclick="showUserForm()">
+      <h2>User Account</h2>
+      <p>Create a user account for gaming.</p>
+    </div>
+    <div class="card" onclick="showAdminForm()">
+      <h2>Admin Account</h2>
+      <p>Create an admin account for management.</p>
+    </div>
+  </div>
+  
+  <!-- User Registration Form Container -->
+  <div id="userFormContainer" class="container">
+    <form id="userRegisterForm">
+      <h2>Create User Account</h2>
+      
+      <label for="user_username">Username</label>
+      <input type="text" id="user_username" placeholder="Enter your username" required>
+      
+      <label for="phone">Phone</label>
+      <input type="tel" id="phone" placeholder="Enter your phone number" required>
+      
+      <label for="user_email">Email Address</label>
+      <input type="email" id="user_email" placeholder="Enter your email" required>
+      
+      <label for="user_password">Password</label>
+      <div class="input-container">
+        <input type="password" id="user_password" placeholder="Enter your password" required>
+        <button type="button" id="toggleUserPassword" class="eye-icon">&#128065;</button>
+      </div>
+      
+      <button type="submit">Create User Account</button>
+      
+      <p id="userMessage"></p>
+      
+      <p class="login-link">Already have an account? <a href="/">Login here</a></p>
+    </form>
+  </div>
+  
+  <!-- Admin Registration Form Container -->
+  <div id="adminFormContainer" class="container">
+    <form id="adminRegisterForm">
+      <h2>Create Admin Account</h2>
+      
+      <label for="admin_username">Username</label>
+      <input type="text" id="admin_username" placeholder="Enter your username" required>
+      
+      <label for="admin_email">Email Address</label>
+      <input type="email" id="admin_email" placeholder="Enter your email" required>
+      
+      <label for="admin_password">Password</label>
+      <div class="input-container">
+        <input type="password" id="admin_password" placeholder="Enter your password" required>
+        <button type="button" id="toggleAdminPassword" class="eye-icon">&#128065;</button>
+      </div>
+      
+      <button type="submit">Create Admin Account</button>
+      
+      <p id="message"></p>
+      
+      <p class="login-link">Already have an account? <a href="/">Login here</a></p>
+    </form>
+  </div>
+  
+  <script>
+    // Toggle password visibility for User Registration
+    document.getElementById("toggleUserPassword").addEventListener("click", function() {
+      const passwordField = document.getElementById("user_password");
+      passwordField.type = passwordField.type === "password" ? "text" : "password";
+    });
+    
+    // Toggle password visibility for Admin Registration
+    document.getElementById("toggleAdminPassword").addEventListener("click", function() {
+      const passwordField = document.getElementById("admin_password");
+      passwordField.type = passwordField.type === "password" ? "text" : "password";
+    });
+
+    // Show User Registration Form
+    function showUserForm() {
+      document.getElementById("choiceContainer").style.display = "none";
+      document.getElementById("userFormContainer").style.display = "block";
+    }
+    
+    // Show Admin Registration Form
+    function showAdminForm() {
+      document.getElementById("choiceContainer").style.display = "none";
+      document.getElementById("adminFormContainer").style.display = "block";
+    }
+    
+    // User Registration Form Submission
+    document.getElementById("userRegisterForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      
+      const username = document.getElementById("user_username").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const email = document.getElementById("user_email").value.trim();
+      const password = document.getElementById("user_password").value;
+      const userMessageEl = document.getElementById("userMessage");
+      
+      if (!username || !phone || !email || !password) {
+        userMessageEl.textContent = "Please fill in all fields.";
+        return;
+      }
+      
+      try {
+        const response = await fetch("/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, phone, email, password })
+        });
+      
+        const data = await response.json();
+      
+        if (response.ok) {
+          userMessageEl.style.color = "green";
+          userMessageEl.textContent = "User account created successfully!";
+          setTimeout(() => {
+            window.location.href = "/";
+          }, 1000);
+        } else {
+          userMessageEl.textContent = data.detail || "Registration failed";
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        userMessageEl.textContent = "An error occurred. Please try again.";
+      }
+    });
+    
+    // Admin Registration Form Submission
+    document.getElementById("adminRegisterForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      
+      const username = document.getElementById("admin_username").value.trim();
+      const email = document.getElementById("admin_email").value.trim();
+      const password = document.getElementById("admin_password").value;
+      const messageEl = document.getElementById("message");
+      
+      if (!username || !email || !password) {
+        messageEl.textContent = "Please fill in all fields.";
+        return;
+      }
+      
+      try {
+        const response = await fetch("/register_admin", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, email, password })
+        });
+      
+        const data = await response.json();
+      
+        if (response.ok) {
+          messageEl.style.color = "green";
+          messageEl.textContent = "Admin account created successfully!";
+          setTimeout(() => {
+            window.location.href = "/";
+          }, 1000);
+        } else {
+          messageEl.textContent = data.detail || "Registration failed";
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        messageEl.textContent = "An error occurred. Please try again.";
+      }
+    });
+  </script>
+</body>
+</html>
