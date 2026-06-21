@@ -219,6 +219,4 @@ Sensitive credentials are stored using `.env` and are excluded from GitHub via `
 
 ## 👨‍💻 Author
 
-Built by **Sam**  
-Computer Science Engineering Student  
-FastAPI | MySQL | Full Stack Development
+Built by **Aditya Samson**  
