@@ -4,6 +4,9 @@ A Steam-inspired game store web application built using **FastAPI**, **MySQL**, 
 
 This project simulates a digital game marketplace where users can browse games, add them to cart, purchase them, and manage their profiles. It also includes an admin dashboard for managing games and viewing transactions.
 
+<img width="1894" height="898" alt="Screenshot1 (155)" src="https://github.com/user-attachments/assets/abdf3bbf-2fd5-46f3-bc29-dd2c7b48be77" />
+
+
 ---
 
 ## 🚀 Features
@@ -163,6 +166,11 @@ http://127.0.0.1:8000
 ```
 
 ---
+## Screenshots
+<img width="1920" height="895" alt="Screenshot1 (156)" src="https://github.com/user-attachments/assets/7681461c-8fdc-4413-8a17-1fcef0a1a856" />
+<img width="1902" height="898" alt="Screenshot1 (157)" src="https://github.com/user-attachments/assets/7f6c076e-6dc9-4482-827e-cb47ffb4b143" />
+<img width="1920" height="895" alt="Screenshot1 (160)" src="https://github.com/user-attachments/assets/e7477524-ab4f-4c46-b62c-8b9dffbc30f3" />
+<img width="1920" height="891" alt="Screenshot1 (162)" src="https://github.com/user-attachments/assets/36c7ec43-e9a8-453d-b34a-7ed4df6e1813" />
 
 ## 📡 API Endpoints
 
