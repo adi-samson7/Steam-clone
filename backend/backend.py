@@ -70,40 +70,66 @@ class GameUpdate(GameBase):
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
     # Serves the login page
-    return templates.TemplateResponse("login.html", {"request": request})
+    return templates.TemplateResponse(
+        request=request,
+        name="login.html"
+    )
 
 @app.get("/register.html", response_class=HTMLResponse)
 async def show_register(request: Request):
-    return templates.TemplateResponse("register.html", {"request": request})
+    return templates.TemplateResponse(
+    request=request,
+    name="register.html"
+)
 
 @app.get("/index.html", response_class=HTMLResponse)
 async def show_index(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse(
+    request=request,
+    name="index.html"
+)
 
 @app.get("/store.html", response_class=HTMLResponse)
 async def store(request: Request):
-    return templates.TemplateResponse("store.html", {"request": request})
-
+    return templates.TemplateResponse(
+    request=request,
+    name="store.html"
+)
 @app.get("/cart.html", response_class=HTMLResponse)
 async def cart(request: Request):
-    return templates.TemplateResponse("cart.html", {"request": request})
+    return templates.TemplateResponse(
+    request=request,
+    name="cart.html"
+)
 
 @app.get("/payment.html", response_class=HTMLResponse)
 async def show_payment_page(request: Request):
-    return templates.TemplateResponse("payment.html", {"request": request})
+    return templates.TemplateResponse(
+    request=request,
+    name="payment.html"
+)
 
 @app.get("/order-confirmation.html", response_class=HTMLResponse)
 async def show_order_confirmation(request: Request):
-    return templates.TemplateResponse("order-confirmation.html", {"request": request})
+    return templates.TemplateResponse(
+    request=request,
+    name="order-confirmation.html"
+)
 
 @app.get("/admin.html", response_class=HTMLResponse)
 async def show_admin(request: Request):
-    return templates.TemplateResponse("admin.html", {"request": request})
+    return templates.TemplateResponse(
+    request=request,
+    name="admin.html"
+)
 
 # New: Profile Page Endpoint
 @app.get("/profile", response_class=HTMLResponse)
 async def profile(request: Request):
-    return templates.TemplateResponse("profile.html", {"request": request})
+    return templates.TemplateResponse(
+    request=request,
+    name="profile.html"
+)
 
 # ----- API ENDPOINTS -----
 
